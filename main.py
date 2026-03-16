@@ -213,7 +213,133 @@ id_gen = student_id_generator()
 
 
 def manage_subjects():
-     pass
+     print("====== Subject Menu ====== \n")
+     subject_file = os.path.join("config", "subject.json")
+     try:
+          with open (file=subject_file, mode="r", encoding="utf-8") as file:
+               subject_data = json.load(file)
+     except (JSONDecodeError, FileNotFoundError):
+          subject_data = []
+
+     
+     while True:
+          user_choice = input(
+          "1: Add Subject \n"
+          "2: view Subject \n"
+          "3: delete Subject\n"
+          "4:Go Back to Main Menu \n"
+          "Select one to continue"
+     )
+
+          if user_choice == "1":
+          
+               subject_to_id_match = {
+               "physics" : "SUB-100",
+               "chemistry" : "asub-101",
+               "biology" : "SUB-102",
+               "geography" : "SUB-103",
+               "economics" : "SUB-104",
+               "literature" : "SUB-105",
+               "costing" : "SUB-106",
+               "accounting" : "SUB-107",
+               "general science" : "SUB-108",
+               "mathematics" : "SUB-109",
+               "english" : "SUB-110",
+               "social studies" : "SUB-111",
+               "food and nutrition" : "SUB-112"
+
+
+          }
+
+               sub_list: str = ['physics','chemistry','biology','geography','economics','literature', 'accounting','accounting']
+               while True:
+                    try:
+                         get_student_subject: str = input(
+                    "\nAdd Your Subject _ select from these subjects\n"  
+                    "['physics','chemistry','biology','geography','economics','literature', 'accounting','accounting'] \n"
+                         "core subjects will added do you auto\n"
+               ).strip().lower()
+                         if  get_student_subject  in sub_list:
+                              print(f"{get_student_subject} entered  ")
+                              get_student_subject
+                              break
+                    except (TypeError, UnboundLocalError, NameError):
+                         print("Subject entered not found   ")
+                         continue
+          
+
+          
+
+               if get_student_subject in list(subject_to_id_match.keys()):
+                Sub_ID = subject_to_id_match.get(get_student_subject)
+               
+
+               data_append = {
+                         "subject name" :get_student_subject,
+                         "subject id" : Sub_ID,
+               
+          } 
+
+               subject_data.append(data_append)
+
+               with open(file=subject_file, mode="w", encoding="utf-8") as file:
+                         json.dump(subject_data, file, indent=4)
+                         
+
+
+
+
+
+          elif user_choice == "2":
+               print("==== printing subject and its ID")
+               for  element in subject_data:
+                    
+                    print(f"\nSubject name: {element["subject name"]}\n"
+                          f"Subject ID: {element["subject id"]}")
+                    
+               print(
+                    "Subject name : general science \n"
+                    "Subject ID: SUB-108 \n"
+                    "Subject name: mathematics \n"
+                    "Subject ID: SUB-109"
+                    "Subject name: english\n"
+                    "Subject ID: SUB-110  \n"
+                    "Subject name: social studies \n"
+                    "Subject ID: SUB-111\n"
+               )
+               print()
+
+
+
+
+          elif user_choice == "3":
+ #delete Subject
+ 
+               get_subject_to_delete = input("Enter Subject name: \n")
+               for value in subject_data:
+                    if get_subject_to_delete not in value["subject name"]:
+                         print("Subject now found")
+                         break
+                    else:
+                         confirm = input(f"do you want to delete {get_subject_to_delete}? ").lower().strip()
+                         if confirm == "y" or confirm == "yes":
+                              subject_data.remove(value)
+                              with open(file=subject_file, mode="w", encoding="utf-8") as f:
+                                   json.dump(subject_data, f, indent=4)
+                                   
+                
+               
+          elif user_choice == "4":
+               return
+          else:
+               print("invalid user choice")
+
+
+
+
+
+
+
 
 def data_entry():
      pass
