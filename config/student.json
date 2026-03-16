@@ -1,24 +1,14 @@
 [
     {
         "student ID": 100,
-        "full name": "Doris Pokuaa Agyemang",
-        "gender": "f",
+        "first name": "Richard Ben",
+        "last name": "Ephraim",
+        "gender": "m",
         "form": "4",
         "date of Adminission": [
-            "12",
-            "6",
-            "2022"
-        ]
-    },
-    {
-        "student ID": 101,
-        "full name": "Kofi Mensah",
-        "gender": "m",
-        "form": "2",
-        "date of Adminission": [
-            "6",
-            "10",
-            "2024"
+            "01",
+            "01",
+            "2003"
         ]
     }
 ]

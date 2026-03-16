@@ -55,7 +55,7 @@ def manage_student():
      
      while True:
          student_operation = input(
-              "\n ========== Main Menu ========== \n"
+              "\n ========== Student Menu ========== \n"
               "1: Add Student \n"
           "2: Update Student \n"
           "3: Delete Student \n"
@@ -68,8 +68,9 @@ def manage_student():
          if student_operation == "1":
                print(f"\n  =========== Add Student ============\n")
                
-               full_name = input("Enter full name: \n").title().strip()
-               gender = input("Enter [M]ale / [F]emale \n enter 'm' or 'f'").lower().strip()    
+               first_name = input("Enter First name: \n").title().strip()
+               last_name = input("Enter first name: \n").title().strip()
+               gender = input("Enter [M]ale / [F]emale \n enter 'm' or 'f' \n").lower().strip()    
                Form = input("Enter your class or form \n").strip()
                dateofRegistration = input("date of Admission: \n").split() 
 
@@ -79,12 +80,13 @@ def manage_student():
                #           id_gen += 1
                  
                data_appending = {
-          "student ID" : next(id_gen),
-          "full name" : full_name,
-          "gender" : gender,
-          "form" : Form,
-          "date of Adminission" : dateofRegistration
-     }  
+                              "student ID" : next(id_gen),
+                              "first name" : first_name,
+                              "last name" : last_name,
+                              "gender" : gender,
+                              "form" : Form,
+                              "date of Adminission" : dateofRegistration
+                                }  
                data.append(data_appending)
 
                with open(file=student_file_path, mode="w") as file:
@@ -94,45 +96,91 @@ def manage_student():
           
          elif student_operation == "2":
               #update student details
+              print("\n===== Update Student Information ===== \n")
 
-              update_by_ID = input("enter  your Student ID \n").strip()
+              update_by_ID = int( input("enter  your Student ID \n").strip())
 
-              for var in data:
-                   if var["student ID"] == int(update_by_ID):
-                        print(var["full name"],)
-                        print(var["form"])
-                        print(var["date of Adminission"])
+              if len(data) == 0:
+                   print("Data Not Found")
+                   break
+              else:
+                   for  index,value in enumerate(data):
+                        if value["student ID"] == update_by_ID:
+                             print(data[index], end="\n")
+                             print("\nYou about to update you Data\nStudent ID cant be updated ..... \nb")
 
-                        var1 = input("Enter new Full name: \n").title().strip()
-                        var2 = input ("enter new Gender [m]/[f] \n")
-                        var3 = input("enter new class/form \n").strip()
-                        var4 = input("enter new date of admission \n").strip().split()
+                             firstname = input("Enter full name: \n").title().strip()
+                             lastname = input("Enter full name: \n").title().strip()
+                             new_gender = input("Enter [M]ale / [F]emale \n enter 'm' or 'f'").lower().strip()    
+                             new_form = input("Enter your class or form \n").strip()
+                             new_dateofRegistration = input("date of Admission: \n").split() 
+
+                             data[index]["student ID"] = update_by_ID
+                             data[index]["first name"] = firstname
+                             data[index]["last name"] = lastname
+                             data[index]["gender"] = new_gender
+                             data[index]["form"] = new_form
+                             data[index]["date of Adminission"] = new_dateofRegistration
+
+                             with open(file=student_file_path, mode="w") as f:
+                                  json.dump(data, f, indent=4)
+                             print(F"\n{lastname}, your New data has been updatedly successfully... \n")
 
 
-                        var["student ID"] = update_by_ID
-                        var["full name"] = var1
-                        var["gender"] = var2
-                        var["form"] = var3
-                        var["date of Adminission"] = var4
-                       
 
-                        with open(file=student_file_path, mode="a") as file:
-                             json.dump(var, file, indent=4)
-                     
-                        print(var)
-                        break
+
+
+
+
+                             break
                         
          
 
          elif student_operation == "3":
-              pass
+              #delete Student
+              print("\n===== Removing Student information =====\n")
+              update_ID = int( input("enter  your Student ID \n").strip())
+              for  index,value in enumerate(data):
+                        if value["student ID"] == update_ID:
+                             print(data[index], "\n", "data will be deleted from our system\n")
+
+                             caution = input("do you want to delete your data? y /n \n").strip().lower()
+                             if caution == "y" or caution == "yes":
+                                  data.remove(data[index])
+                                 
+                                 
+                                  with open(file=student_file_path, mode="w") as f:
+                                    json.dump(data, f, indent=4)
+                                  print("\nStudent Information Deleted Successfully\n")
+                                  break
+                             else:
+                                  print("\n ... Student Student Deletion Aborted... \n")
+          
+
+
+             
          elif student_operation == "4":
-              pass
+              counter =1
+              
+              for  index,value in enumerate(data):
+                   print(f"\n==== Student No:{counter} ====\n")
+                   print(f"Student ID:{value["student ID"]} ")
+                   print(f"First Name:{value["first name"]} ")
+                   print(f"Last name:{value["last name"]} ")
+                   print(f"Gender:{value["gender"]} ")
+                   print(f"Student class:{value["form"]} ")
+                   print(f"Date of Admission:{value["date of Adminission"]} \n")
+                   counter +=10
+
+              
          elif student_operation == "5":
-              pass
+              print("\n===== Search Student ======")
+              
          else:
-              return
+             ';;' return
          
+
+ 
 
          
 
