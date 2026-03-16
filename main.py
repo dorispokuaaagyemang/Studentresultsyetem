@@ -55,16 +55,15 @@ def manage_student():
      
      while True:
          student_operation = input(
-              "\n ========== Student Menu ========== \n"
-              "1: Add Student \n"
-          "2: Update Student \n"
-          "3: Delete Student \n"
-          "4: View All Student: \n"
-          "5: Search Student \n"
-          "6: exit to Main menu: \n"
-           "select one to continue \n" 
-           "\n ======= ======== =========\n"
-         )
+                              "\n ========== Student Menu ========== \n"
+                              "1: Add Student \n"
+                                   "2: Update Student \n"
+                                   "3: Delete Student \n"
+                                   "4: View All Student: \n"
+                                   "5: exit to Main menu: \n"
+                                   "select one to continue \n" 
+                                   "\n ======= ======== =========\n"
+                         )
          if student_operation == "1":
                print(f"\n  =========== Add Student ============\n")
                
@@ -170,14 +169,10 @@ def manage_student():
                    print(f"Gender:{value["gender"]} ")
                    print(f"Student class:{value["form"]} ")
                    print(f"Date of Admission:{value["date of Adminission"]} \n")
-                   counter +=10
+                   counter +=1
 
-              
-         elif student_operation == "5":
-              print("\n===== Search Student ======")
-              
          else:
-             ';;' return
+              return
          
 
  
