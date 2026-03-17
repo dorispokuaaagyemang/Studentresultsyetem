@@ -5,6 +5,37 @@ from json import JSONDecodeError
 
 
 
+#load student file into memory
+student_file_path = os.path.join("config", "student.json")
+try:
+     with open(file=student_file_path, mode="r") as file:
+          data = json.load(file)
+except (JSONDecodeError, FileExistsError, FileNotFoundError):
+     data = []
+
+
+
+
+#load Subject file into memory
+subject_file = os.path.join("config", "subject.json")
+try:
+     with open (file=subject_file, mode="r", encoding="utf-8") as file:
+          subject_data = json.load(file)
+except (JSONDecodeError, FileNotFoundError):
+     subject_data = []
+     
+   
+   
+     
+     
+#load results file into memory     
+results_file = os.path.join("config", "result.json")
+try:
+     with open (file=results_file, mode="r", encoding="utf-8") as f:
+          results_data = json.load(f)
+except (JSONDecodeError, FileNotFoundError, FileExistsError):
+     results_data = []     
+
 
 def main():
     ff = result_management_system()
@@ -68,18 +99,19 @@ def manage_student():
                print(f"\n  =========== Add Student ============\n")
                
                first_name = input("Enter First name: \n").title().strip()
-               last_name = input("Enter first name: \n").title().strip()
+               last_name = input("Enter last name: \n").title().strip()
                gender = input("Enter [M]ale / [F]emale \n enter 'm' or 'f' \n").lower().strip()    
-               Form = input("Enter your class or form \n").strip()
-               dateofRegistration = input("date of Admission: \n").split() 
+               Form = input("Enter your class or form, [1, 2, 3] \n").strip()
+               Form if Form in [1, 2, 3] else None
+               dateofRegistration = input("date of Admission: eg 27 01 2026 \n").split() 
 
 
-               # for _ in data:
-               #      if data[-1]["student ID"] == :
-               #           id_gen += 1
+               for _ in data:
+                    id_gen =(data[-1]["student ID"])+1
+                   
                  
                data_appending = {
-                              "student ID" : next(id_gen),
+                              "student ID" : id_gen,
                               "first name" : first_name,
                               "last name" : last_name,
                               "gender" : gender,
@@ -108,8 +140,8 @@ def manage_student():
                              print(data[index], end="\n")
                              print("\nYou about to update you Data\nStudent ID cant be updated ..... \nb")
 
-                             firstname = input("Enter full name: \n").title().strip()
-                             lastname = input("Enter full name: \n").title().strip()
+                             firstname = input("Enter first name: \n").title().strip()
+                             lastname = input("Enter last  name: \n").title().strip()
                              new_gender = input("Enter [M]ale / [F]emale \n enter 'm' or 'f'").lower().strip()    
                              new_form = input("Enter your class or form \n").strip()
                              new_dateofRegistration = input("date of Admission: \n").split() 
@@ -155,8 +187,6 @@ def manage_student():
                              else:
                                   print("\n ... Student Student Deletion Aborted... \n")
           
-
-
              
          elif student_operation == "4":
               counter =1
@@ -177,49 +207,11 @@ def manage_student():
 
  
 
-         
-
-
-def student_id_generator():
-
-
-
-     start = 100
-     
-     while start > 0:
-          yield start
-          start +=1 
-          
-
-id_gen = student_id_generator()
-          
-
-
-
-     
-    
-
-     
-
-     
-    
-     
-
-
-     
-
-
-
 
 
 def manage_subjects():
      print("====== Subject Menu ====== \n")
-     subject_file = os.path.join("config", "subject.json")
-     try:
-          with open (file=subject_file, mode="r", encoding="utf-8") as file:
-               subject_data = json.load(file)
-     except (JSONDecodeError, FileNotFoundError):
-          subject_data = []
+    
 
      
      while True:
@@ -246,18 +238,21 @@ def manage_subjects():
                "mathematics" : "SUB-109",
                "english" : "SUB-110",
                "social studies" : "SUB-111",
-               "food and nutrition" : "SUB-112"
-
-
+               "food and nutrition" : "SUB-112",
+               "computing": "SUB-113", 
+               "physical education": "SUB-114",
+               "picture making": "SUB-115",
+               "french":"SUB-116",
+               "crs": "SUB-117"
           }
 
-               sub_list: str = ['physics','chemistry','biology','geography','economics','literature', 'accounting','accounting']
+               sub_list: str = ['english','general science','mathematics','physics','chemistry','biology','geography','economics','literature', 'accounting','food and nutrition', 'french','crs','computing','physical education',]
                while True:
                     try:
                          get_student_subject: str = input(
                     "\nAdd Your Subject _ select from these subjects\n"  
-                    "['physics','chemistry','biology','geography','economics','literature', 'accounting','accounting'] \n"
-                         "core subjects will added do you auto\n"
+                    "['physics','english','mathematics','general science','chemistry','biology','crs','geography','economics', 'french,'literature', 'picture making',' 'accounting','food and nutrition'] \n"
+                        
                ).strip().lower()
                          if  get_student_subject  in sub_list:
                               print(f"{get_student_subject} entered  ")
@@ -296,17 +291,7 @@ def manage_subjects():
                     
                     print(f"\nSubject name: {element["subject name"]}\n"
                           f"Subject ID: {element["subject id"]}")
-                    
-               print(
-                    "Subject name : general science \n"
-                    "Subject ID: SUB-108 \n"
-                    "Subject name: mathematics \n"
-                    "Subject ID: SUB-109"
-                    "Subject name: english\n"
-                    "Subject ID: SUB-110  \n"
-                    "Subject name: social studies \n"
-                    "Subject ID: SUB-111\n"
-               )
+               
                print()
 
 
@@ -342,16 +327,154 @@ def manage_subjects():
 
 
 def data_entry():
-     pass
+     # enter results  
+          
+     try:
+          ask_id = int(input("enter studen ID: \n"))
+          ask_id
+     except (TypeError, NameError, ValueError):
+          print("invalid input")
+     
+     for elements in data:
+          if ask_id == elements["student ID"]:
+               print(f"ID matches {elements.get("first name")}")
+               break
+          
+          
+          
+     
+     
+     ask_subject = input("enter subject name: \n")
+     if ask_subject not in ['english','general science','mathematics','physics','chemistry','biology','geography','economics','literature', 'accounting','food and nutrition','computing','physical education','picture making','french','crs']:
+          print("Subject not found\n")
+
+     for element in subject_data:
+          if ask_subject == element["subject name"]:
+               print(element.get("subject name"))
+               print(element.get("subject id"))
+          
+               
+     
+          
+     
+     while True: 
+          try:
+                ask_score = int(input("enter subject score"))
+                if ask_score <= 100:
+                     ask_score
+                     break
+          except (ValueError, TypeError, NameError, UnboundLocalError):
+               print("score should be 0-100")
+               continue
+          
+          
+          
+     if ask_score >= 80:
+          score_result = "A1"
+     elif ask_score >= 70:
+          score_result = "B2"
+     elif ask_score >= 65:
+           score_result = "B3"
+     elif ask_score >= 60:
+          score_result = "C4"
+     elif ask_score >=55:
+           score_result = "C5"
+     elif ask_score >=50:
+          score_result = "C6"
+     elif ask_score >= 45:
+          score_data = "D7"
+     elif ask_score >= 40:
+          score_data = "E8"
+     else:
+          score_result = "F"
+     
+          
+     score_data = {
+          "Student id" : ask_id,
+          "subject name" : ask_subject,
+          "score" : ask_score,
+          "Grade" : score_result
+     }
+     
+     
+     
+     results_data.append(score_data)
+     
+     with open(file=results_file, mode="w", encoding="utf-8") as file:
+          json.dump(results_data, file, indent=4)
+          
+     print("\nResults Saved Successfully\n")
+     
+     
+     
+     
+
 
 
 def view_results():
-     pass
+     
+     
+     get_student_id = int(input("Enter ID Student: \n"))
+     
+     for i in data:
+          if  get_student_id not in i.values():
+               print("Student not found")
+               
+          else:
+               for result in results_data:
+                    if result.get("Student id") == get_student_id:
+                         print(
+                              f"Subject: {result.get("subject name")}\n"
+                              f"Score: {result.get("score")}\n"
+                              f"Grade: {result.get("Grade")}\n"
+                         
+                         )
+               
+          
+               
+               
 
 
 
 def generate_results():
-     pass
+     
+     get_student_id = int(input("enter student ID: "))
+     
+     
+     
+     for var in data:
+          if get_student_id not in var.values():
+               print("Student not found")
+               return
+          
+          
+          if get_student_id == var.get("student ID"):
+               print(
+                   f"Student: {var["first name"]} {var["last name"]}\n"
+                   f"Student class: {var["form"]}"       
+                   )
+               
+               total_score = 0
+               count = 0
+               for element in results_data:
+                    if get_student_id == element.get("Student id"):
+                         print(f"Subject: {element.get("subject name")} ")
+                         print(f"Score: {element.get("score")}")
+                         print(f"Grade: {element.get("Grade")}")
+                         
+                         total_score += element.get("score")
+                         
+                    count +=1
+                    print(f"Student's Total Score: {total_score}")
+                    print(f"Average: {total_score/count}")
+                    break 
+                         
+                    
+                         
+                         
+                         
+     
+     
 
 
 
