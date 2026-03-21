@@ -1,46 +1,78 @@
+import os
+import sys
 import json
-import os 
-import sys 
+import shutil
 from json import JSONDecodeError
 
+# 1. SETUP PATHS
+file_root = os.path.expanduser("~")
+config_dir = os.path.join(file_root, "Documents", "config")
+os.makedirs(config_dir, exist_ok=True)
+
+subject_file_path = os.path.join(config_dir, "subject.json")
+result_file_path = os.path.join(config_dir, "result.json")
+students_file_path = os.path.join(config_dir, "student.json")
+
+# 2. PYINSTALLER BUNDLE LOGIC (The "Fix")
+def setup_user_files():
+    """Copies bundled default JSONs to Documents/config if they don't exist."""
+    if hasattr(sys, '_MEIPASS'):
+        bundle_dir = sys._MEIPASS
+    else:
+        bundle_dir = os.path.abspath(".")
+        
+        
+
+    # List of files to ensure exist in Documents
+    files_to_setup = ["subject.json", "result.json", "student.json"]
+    
+    for filename in files_to_setup:
+        dest_path = os.path.join(config_dir, filename)
+        if not os.path.exists(dest_path):
+            source_path = os.path.join(bundle_dir, "config", filename)
+            try:
+                if os.path.exists(source_path):
+                    shutil.copy(source_path, dest_path)
+                else:
+                    # Create an empty list file if no bundle source exists
+                    with open(dest_path, "w", encoding="utf-8") as f:
+                        json.dump([], f)
+            except Exception as e:
+                print(f"Initial setup error for {filename}: {e}")
+
+ 
+setup_user_files()
 
 
-#load student file into memory
-student_file_path = os.path.join("config", "student.json")
+
+
+# Subject json file
 try:
-     with open(file=student_file_path, mode="r") as file:
-          data = json.load(file)
-except (JSONDecodeError, FileExistsError, FileNotFoundError):
-     data = []
-
-
-
-
-#load Subject file into memory
-subject_file = os.path.join("config", "subject.json")
-try:
-     with open (file=subject_file, mode="r", encoding="utf-8") as file:
-          subject_data = json.load(file)
+    with open(file=subject_file_path, mode="r", encoding="utf-8") as subfile:
+        subject_file = json.load(subfile)
 except (JSONDecodeError, FileNotFoundError):
-     subject_data = []
-     
-   
-   
-     
-     
-#load results file into memory     
-results_file = os.path.join("config", "result.json")
+    subject_file = []
+
+# Result json file
 try:
-     with open (file=results_file, mode="r", encoding="utf-8") as f:
-          results_data = json.load(f)
-except (JSONDecodeError, FileNotFoundError, FileExistsError):
-     results_data = []     
+    with open(file=result_file_path, mode="r", encoding="utf-8") as resfile:
+        result_file = json.load(resfile)
+except (JSONDecodeError, FileNotFoundError):
+    result_file = []
 
+# Students json file
+try:
+    with open(file=students_file_path, mode="r", encoding="utf-8") as stufile:
+        student_file = json.load(stufile)
+except (JSONDecodeError, FileNotFoundError):
+    student_file = []
 
+     
 def main():
-    ff = result_management_system()
-    print(ff)
+     ff= result_management_system()
+     print(ff)      
    
+
 
 def result_management_system():
     
@@ -77,12 +109,7 @@ def result_management_system():
 
 
 def manage_student():
-     student_file_path = os.path.join("config", "student.json")
-     try:
-          with open(file=student_file_path, mode="r") as file:
-               data = json.load(file)
-     except (JSONDecodeError, FileExistsError, FileNotFoundError):
-          data = []
+    
      
      while True:
          student_operation = input(
@@ -106,8 +133,14 @@ def manage_student():
                dateofRegistration = input("date of Admission: eg 27 01 2026 \n").split() 
 
 
-               for _ in data:
-                    id_gen =(data[-1]["student ID"])+1
+               try:
+                    for _ in student_file:
+                         id_gen =(student_file[-1]["student ID"])+1
+                         id_gen
+               except (UnboundLocalError, TypeError, ValueError):
+                   id_gen = 100 
+               # id_gen = 100
+                    
                    
                  
                data_appending = {
@@ -118,10 +151,10 @@ def manage_student():
                               "form" : Form,
                               "date of Adminission" : dateofRegistration
                                 }  
-               data.append(data_appending)
+               student_file.append(data_appending)
 
-               with open(file=student_file_path, mode="w") as file:
-                 json.dump(data, file, indent=4)
+               with open(file=students_file_path, mode="w", encoding="utf-8") as file:
+                 json.dump(student_file, file, indent=4)
      
          
           
@@ -131,13 +164,13 @@ def manage_student():
 
               update_by_ID = int( input("enter  your Student ID \n").strip())
 
-              if len(data) == 0:
+              if len(student_file) == 0:
                    print("Data Not Found")
                    break
               else:
-                   for  index,value in enumerate(data):
+                   for  index,value in enumerate(student_file):
                         if value["student ID"] == update_by_ID:
-                             print(data[index], end="\n")
+                             print(student_file[index], end="\n")
                              print("\nYou about to update you Data\nStudent ID cant be updated ..... \nb")
 
                              firstname = input("Enter first name: \n").title().strip()
@@ -146,15 +179,15 @@ def manage_student():
                              new_form = input("Enter your class or form \n").strip()
                              new_dateofRegistration = input("date of Admission: \n").split() 
 
-                             data[index]["student ID"] = update_by_ID
-                             data[index]["first name"] = firstname
-                             data[index]["last name"] = lastname
-                             data[index]["gender"] = new_gender
-                             data[index]["form"] = new_form
-                             data[index]["date of Adminission"] = new_dateofRegistration
+                             student_file[index]["student ID"] = update_by_ID
+                             student_file[index]["first name"] = firstname
+                             student_file[index]["last name"] = lastname
+                             student_file[index]["gender"] = new_gender
+                             student_file[index]["form"] = new_form
+                             student_file[index]["date of Adminission"] = new_dateofRegistration
 
-                             with open(file=student_file_path, mode="w") as f:
-                                  json.dump(data, f, indent=4)
+                             with open(file=students_file_path, mode="w") as f:
+                                  json.dump(student_file, f, indent=4)
                              print(F"\n{lastname}, your New data has been updatedly successfully... \n")
 
 
@@ -171,17 +204,17 @@ def manage_student():
               #delete Student
               print("\n===== Removing Student information =====\n")
               update_ID = int( input("enter  your Student ID \n").strip())
-              for  index,value in enumerate(data):
+              for  index,value in enumerate(student_file):
                         if value["student ID"] == update_ID:
-                             print(data[index], "\n", "data will be deleted from our system\n")
+                             print(student_file[index], "\n", "data will be deleted from our system\n")
 
                              caution = input("do you want to delete your data? y /n \n").strip().lower()
                              if caution == "y" or caution == "yes":
-                                  data.remove(data[index])
+                                  student_file.remove(student_file[index])
                                  
                                  
-                                  with open(file=student_file_path, mode="w") as f:
-                                    json.dump(data, f, indent=4)
+                                  with open(file=students_file_path, mode="w") as f:
+                                    json.dump(student_file, f, indent=4)
                                   print("\nStudent Information Deleted Successfully\n")
                                   break
                              else:
@@ -191,7 +224,7 @@ def manage_student():
          elif student_operation == "4":
               counter =1
               
-              for  index,value in enumerate(data):
+              for  index,value in enumerate(student_file):
                    print(f"\n==== Student No:{counter} ====\n")
                    print(f"Student ID:{value["student ID"]} ")
                    print(f"First Name:{value["first name"]} ")
@@ -210,6 +243,8 @@ def manage_student():
 
 
 def manage_subjects():
+     
+     
      print("====== Subject Menu ====== \n")
     
 
@@ -262,23 +297,31 @@ def manage_subjects():
                          print("Subject entered not found   ")
                          continue
           
-
+               
           
 
                if get_student_subject in list(subject_to_id_match.keys()):
                 Sub_ID = subject_to_id_match.get(get_student_subject)
-               
+                
+                
+               for var in subject_file:
+                    if get_student_subject in var.get("subject name"):
+                         print("Subject already in list \n")
+                         break
+               else:
+                    
+          
 
-               data_append = {
-                         "subject name" :get_student_subject,
-                         "subject id" : Sub_ID,
-               
-          } 
+                    data_append = {
+                              "subject name" :get_student_subject,
+                              "subject id" : Sub_ID,
+                    
+               } 
 
-               subject_data.append(data_append)
+                    subject_file.append(data_append)
 
-               with open(file=subject_file, mode="w", encoding="utf-8") as file:
-                         json.dump(subject_data, file, indent=4)
+                    with open(file=subject_file_path, mode="w", encoding="utf-8") as refile:
+                         json.dump(obj=sub_list, fp=refile, indent=4)
                          
 
 
@@ -287,7 +330,7 @@ def manage_subjects():
 
           elif user_choice == "2":
                print("==== printing subject and its ID")
-               for  element in subject_data:
+               for  element in subject_file:
                     
                     print(f"\nSubject name: {element["subject name"]}\n"
                           f"Subject ID: {element["subject id"]}")
@@ -301,16 +344,17 @@ def manage_subjects():
  #delete Subject
  
                get_subject_to_delete = input("Enter Subject name: \n")
-               for value in subject_data:
+               for value in subject_file:
                     if get_subject_to_delete not in value["subject name"]:
                          print("Subject now found")
                          break
                     else:
                          confirm = input(f"do you want to delete {get_subject_to_delete}? ").lower().strip()
                          if confirm == "y" or confirm == "yes":
-                              subject_data.remove(value)
-                              with open(file=subject_file, mode="w", encoding="utf-8") as f:
-                                   json.dump(subject_data, f, indent=4)
+                              subject_file.remove(value)
+                             
+                              with open(file=subject_file_path, mode="w", encoding="utf-8") as file:
+                                   json.dump(obj=subject_file, fp=file, indent=4)
                                    
                 
                
@@ -328,14 +372,14 @@ def manage_subjects():
 
 def data_entry():
      # enter results  
-          
+   
      try:
           ask_id = int(input("enter studen ID: \n"))
           ask_id
      except (TypeError, NameError, ValueError):
           print("invalid input")
      
-     for elements in data:
+     for elements in student_file:
           if ask_id == elements["student ID"]:
                print(f"ID matches {elements.get("first name")}")
                break
@@ -348,7 +392,7 @@ def data_entry():
      if ask_subject not in ['english','general science','mathematics','physics','chemistry','biology','geography','economics','literature', 'accounting','food and nutrition','computing','physical education','picture making','french','crs']:
           print("Subject not found\n")
 
-     for element in subject_data:
+     for element in subject_file:
           if ask_subject == element["subject name"]:
                print(element.get("subject name"))
                print(element.get("subject id"))
@@ -398,10 +442,10 @@ def data_entry():
      
      
      
-     results_data.append(score_data)
+     result_file.append(score_data)
      
-     with open(file=results_file, mode="w", encoding="utf-8") as file:
-          json.dump(results_data, file, indent=4)
+     with open(file=result_file, mode="w", encoding="utf-8") as file:
+          json.dump(result_file, file, indent=4)
           
      print("\nResults Saved Successfully\n")
      
@@ -414,14 +458,15 @@ def data_entry():
 def view_results():
      
      
+     
      get_student_id = int(input("Enter ID Student: \n"))
      
-     for i in data:
+     for i in student_file:
           if  get_student_id not in i.values():
                print("Student not found")
                
           else:
-               for result in results_data:
+               for result in result_file:
                     if result.get("Student id") == get_student_id:
                          print(
                               f"Subject: {result.get("subject name")}\n"
@@ -438,11 +483,14 @@ def view_results():
 
 def generate_results():
      
+     
      get_student_id = int(input("enter student ID: "))
      
      
      
-     for var in data:
+     
+     
+     for var in student_file:
           if get_student_id not in var.values():
                print("Student not found")
                return
@@ -456,7 +504,7 @@ def generate_results():
                
                total_score = 0
                count = 0
-               for element in results_data:
+               for element in result_file:
                     if get_student_id == element.get("Student id"):
                          print(f"Subject: {element.get("subject name")} ")
                          print(f"Score: {element.get("score")}")
@@ -471,17 +519,14 @@ def generate_results():
                          
                     
                          
-                         
-                         
-     
-     
-
-
-
-
-
+                    
 
 
 
 if __name__ == "__main__":
     main()
+    
+    
+
+
+input("Press Enter to exit ...")
